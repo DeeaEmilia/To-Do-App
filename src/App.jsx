@@ -18,6 +18,7 @@ function getTasks() {
 
 function App() {
     const [tasks, setTasks] = useState([]);
+    const [showAddTask, setShowAddTask] = useState(false);
 
     useEffect(() => {
         const data = getTasks();
@@ -35,17 +36,80 @@ function App() {
     return (
         <div className="container">
             <header className="header">
-                <h1>ToDo App</h1>
-                <Button text="Add" />
+                <h1>To Do App</h1>
+                <Button
+                    color={showAddTask ? 'red' : 'green'}
+                    text={showAddTask ? 'Close' : 'Add'}
+                    onClick={() => setShowAddTask(!showAddTask)}
+                />
             </header>
-            <Tasks tasks={tasks} onDelete={deleteTask} />
+            {showAddTask && <AddTask />}
+            {tasks.length > 0 ? (
+                <Tasks tasks={tasks} onDelete={deleteTask} />
+            ) : (
+                'No tasks to show'
+            )}
         </div>
     );
 }
 
-function Button({ color, text }) {
+function AddTask({ onAdd }) {
+    const [name, setName] = useState('');
+    const [time, setTime] = useState('');
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        if (!name || !time) {
+            alert('Please add task name and time');
+            return;
+        }
+
+        onAdd({ name, time });
+
+        setName('');
+        setTime('');
+    };
+
     return (
-        <button className="btn" style={{ backgroundColor: color }}>
+        <from className="add-form" onSubmit={handleSubmit}>
+            <div className="form-control">
+                <label htmlFor="task-name">Task</label>
+                <input
+                    type="text"
+                    name="task-name"
+                    placeholder="Add Task"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                />
+            </div>
+            <div className="form-control">
+                <label htmlFor="date">Day&Time</label>
+                <input
+                    type="text"
+                    name="date"
+                    placeholder="Add Time"
+                    value={time}
+                    onChange={(event) => setTime(event.target.value)}
+                />
+            </div>
+            <div className="form-control">
+                <input
+                    type="submit"
+                    value="Save Task"
+                    className="btn btn-block"
+                />
+            </div>
+        </from>
+    );
+}
+
+function Button({ color, text, onClick }) {
+    return (
+        <button
+            onClick={onClick}
+            className="btn"
+            style={{ backgroundColor: color }}
+        >
             {text}
         </button>
     );
@@ -66,8 +130,10 @@ function Task({ task, onDelete }) {
         <div className="task">
             <h3>
                 {task.text}
-                <FaTimes style={{ color: 'red', cursor: 'pointer' }}
-                    onClick={() => onDelete(task.id) } />
+                <FaTimes
+                    style={{ color: 'red', cursor: 'pointer' }}
+                    onClick={() => onDelete(task.id)}
+                />
             </h3>
             <p>{task.day}</p>
         </div>
