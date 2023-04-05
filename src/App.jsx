@@ -47,7 +47,7 @@ function App() {
                     onClick={() => setShowAddTask(!showAddTask)}
                 />
             </header>
-            {showAddTask && <AddTask />}
+            {showAddTask && <AddTask onAdd={addTask} />}
             {tasks.length > 0 ? (
                 <Tasks tasks={tasks} onDelete={deleteTask} />
             ) : (
@@ -58,32 +58,32 @@ function App() {
 }
 
 function AddTask({ onAdd }) {
-    const [name, setName] = useState('');
-    const [time, setTime] = useState('');
+    const [text, setText] = useState('');
+    const [day, setDay] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        if (!name || !time) {
-            alert('Please add task name and time');
+        if (!text || !day) {
+            alert('Please add task text and day');
             return;
         }
 
-        onAdd({ name, time });
+        onAdd({ text, day });
 
-        setName('');
-        setTime('');
+        setText('');
+        setDay('');
     };
 
     return (
-        <from className="add-form" onSubmit={handleSubmit}>
+        <form className="add-form" onSubmit={handleSubmit}>
             <div className="form-control">
                 <label htmlFor="task-name">Task</label>
                 <input
                     type="text"
                     name="task-name"
                     placeholder="Add Task"
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
+                    value={text}
+                    onChange={(event) => setText(event.target.value)}
                 />
             </div>
             <div className="form-control">
@@ -91,9 +91,9 @@ function AddTask({ onAdd }) {
                 <input
                     type="text"
                     name="date"
-                    placeholder="Add Time"
-                    value={time}
-                    onChange={(event) => setTime(event.target.value)}
+                    placeholder="Add Date"
+                    value={day}
+                    onChange={(event) => setDay(event.target.value)}
                 />
             </div>
             <div className="form-control">
@@ -103,7 +103,7 @@ function AddTask({ onAdd }) {
                     className="btn btn-block"
                 />
             </div>
-        </from>
+        </form>
     );
 }
 
