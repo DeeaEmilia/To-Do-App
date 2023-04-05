@@ -33,6 +33,10 @@ function App() {
         setTasks(updatedTasks);
     };
 
+    const addTask = (task) => {
+        setTasks([...tasks, task]);
+    };
+
     return (
         <div className="container">
             <header className="header">
