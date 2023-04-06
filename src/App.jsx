@@ -1,5 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
+import { Routes, Route } from 'react-router-dom';
+
+const StoreContext = createContext(null);
+// null este valoarea initiala
 
 function getTasks() {
     return [
@@ -38,31 +42,41 @@ function App() {
     };
 
     return (
-        <div className="container">
-            <header className="header">
-                <h1>To Do App</h1>
-                <Button
-                    color={showAddTask ? 'red' : 'green'}
-                    text={showAddTask ? 'Close' : 'Add'}
-                    onClick={() => setShowAddTask(!showAddTask)}
-                />
-            </header>
-            {showAddTask && <AddTask onAdd={addTask} />}
-            {tasks.length > 0 ? (
-                <Tasks tasks={tasks} onDelete={deleteTask} />
-            ) : (
-                'No tasks to show'
-            )}
-        </div>
+        <Routes>
+            <Route
+                index
+                element={
+                    <StoreContext.Provider
+                        value={{ tasks, addTask, deleteTask }}
+                    >
+                        {/* pentru a "baga" in context info de care avem nevoie trebuie sa le pasam la proprietatea de value */}
+                        <div className="container">
+                            <header className="header">
+                                <h1>To Do App</h1>
+                                <Button
+                                    color={showAddTask ? 'red' : 'green'}
+                                    text={showAddTask ? 'Close' : 'Add'}
+                                    onClick={() => setShowAddTask(!showAddTask)}
+                                />
+                            </header>
+                            {showAddTask && <AddTask />}
+                            {tasks.length > 0 ? <Tasks /> : 'No tasks to show'}
+                        </div>
+                    </StoreContext.Provider>
+                }
+            />
+            <Route path="about" element={<h2>About</h2>} />
+        </Routes>
     );
 }
 
-function AddTask({ onAdd }) {
+function AddTask() {
     // const [text, setText] = useState('');
     // const [day, setDay] = useState('');
 
     const text = useRef('');
     const day = useRef('');
+    const { addTask } = useContext(StoreContext);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -71,7 +85,7 @@ function AddTask({ onAdd }) {
             return;
         }
 
-        onAdd({ text: text.current.value, day: day.current.value });
+        addTask({ text: text.current.value, day: day.current.value });
 
         text.current.value = '';
         day.current.value = '';
@@ -123,11 +137,12 @@ function Button({ color, text, onClick }) {
     );
 }
 
-function Tasks({ tasks, onDelete }) {
+function Tasks() {
+    const { tasks, deleteTask } = useContext(StoreContext);
     return (
         <>
             {tasks.map((task, index) => (
-                <Task key={index} task={task} onDelete={onDelete} />
+                <Task key={index} task={task} onDelete={deleteTask} />
             ))}
         </>
     );
