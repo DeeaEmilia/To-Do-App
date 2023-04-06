@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 
 function getTasks() {
@@ -58,8 +58,11 @@ function App() {
 }
 
 function AddTask({ onAdd }) {
-    const [text, setText] = useState('');
-    const [day, setDay] = useState('');
+    // const [text, setText] = useState('');
+    // const [day, setDay] = useState('');
+
+    const text = useRef('');
+    const day = useRef('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -68,10 +71,13 @@ function AddTask({ onAdd }) {
             return;
         }
 
-        onAdd({ text, day });
+        onAdd({ text: text.current.value, day: day.current.value });
 
-        setText('');
-        setDay('');
+        text.current.value = '';
+        day.current.value = '';
+
+        // setText('');
+        // setDay('');
     };
 
     return (
@@ -82,8 +88,7 @@ function AddTask({ onAdd }) {
                     type="text"
                     name="task-name"
                     placeholder="Add Task"
-                    value={text}
-                    onChange={(event) => setText(event.target.value)}
+                    ref={text}
                 />
             </div>
             <div className="form-control">
@@ -92,8 +97,7 @@ function AddTask({ onAdd }) {
                     type="text"
                     name="date"
                     placeholder="Add Date"
-                    value={day}
-                    onChange={(event) => setDay(event.target.value)}
+                    ref={day}
                 />
             </div>
             <div className="form-control">
